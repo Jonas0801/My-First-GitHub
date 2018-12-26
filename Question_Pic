@@ -1,0 +1,114 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class Question_Pic : MonoBehaviour
+{
+    public Text level;
+    public int btnValue;
+    int count;
+    int rndNum;
+
+    public GameObject winImage;
+    public GameObject[] QuesPic;
+    [Range(1, 4)]
+    public int[] ansRndValue;
+    public int[] saveRndNum;
+    
+
+    // Start is called before the first frame update
+
+    private void Start()
+    {
+        winImage.SetActive(false);
+        foreach (var ques in QuesPic)
+        {
+            ques.SetActive(false);
+        }
+    }
+
+    public void OnClickQues()
+    {
+        if (count == 0)
+        {
+            OnQues();
+        }
+        else
+            print("Already Start!");
+    }
+
+    public void OnQues()
+    {
+        reStart:
+        rndNum = Random.Range(0, QuesPic.Length);
+        saveRndNum[count] = rndNum;
+        
+        if (count > 0)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (saveRndNum[i] == rndNum)
+                {
+                    print("重複");
+                    goto reStart;
+                }
+            }
+        }
+
+        QuesPic[rndNum].SetActive(true);
+        count++;
+        level.text = "第" + count + "題";
+        if (count == ansRndValue.Length +1)
+        {
+            count = 0;
+            saveRndNum = new int[10];
+            StartCoroutine(win());
+            print("通關");
+        }
+    }
+
+    public void OnCorrect()
+    {
+        if (QuesPic[rndNum].activeSelf == false) { print("沒有題目!"); return; }
+
+        if (ansRndValue[rndNum] == btnValue)
+        {
+            print("答對");
+            QuesPic[rndNum].SetActive(false);
+            print(rndNum);
+            OnQues();
+        }
+        else
+            print("錯誤");
+    }
+
+    IEnumerator win()
+    {
+        winImage.SetActive(true);
+        yield return new WaitForSeconds(3f);
+        winImage.SetActive(false);
+        //OnClickQues();
+    }
+
+    public void A()
+    {
+        btnValue = 1;
+        OnCorrect();
+    }
+    public void B()
+    {
+        btnValue = 2;
+        OnCorrect();
+    }
+    public void C()
+    {
+        btnValue = 3;
+        OnCorrect();
+    }
+    public void D()
+    {
+        btnValue = 4;
+        OnCorrect();
+    }
+}
