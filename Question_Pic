@@ -15,7 +15,7 @@ public class Question_Pic : MonoBehaviour
     [Range(1, 4)]
     public int[] ansRndValue;
     public int[] saveRndNum;
-    
+
 
     // Start is called before the first frame update
 
@@ -32,40 +32,44 @@ public class Question_Pic : MonoBehaviour
     {
         if (count == 0)
         {
-            OnQues();
+            Rnd();
         }
         else
             print("Already Start!");
     }
 
-    public void OnQues()
+    public void Rnd()
     {
-        reStart:
-        rndNum = Random.Range(0, QuesPic.Length);
-        saveRndNum[count] = rndNum;
-        
-        if (count > 0)
+    reStart:
+        if (count < ansRndValue.Length)
         {
-            for (int i = 0; i < count; i++)
+            rndNum = Random.Range(0, QuesPic.Length);
+            saveRndNum[count] = rndNum;
+
+            if (count > 0)
             {
-                if (saveRndNum[i] == rndNum)
+                for (int i = 0; i < count; i++)
                 {
-                    print("重複");
-                    goto reStart;
+                    if (saveRndNum[i] == rndNum)
+                    {
+                        print("重複");
+                        goto reStart;
+                    }
                 }
             }
-        }
-
-        QuesPic[rndNum].SetActive(true);
+            QuesPic[rndNum].SetActive(true);
+        } 
         count++;
-        level.text = "第" + count + "題";
-        if (count == ansRndValue.Length +1)
+        
+        if (count == ansRndValue.Length + 1)
         {
             count = 0;
             saveRndNum = new int[10];
             StartCoroutine(win());
             print("通關");
         }
+
+        level.text = "第" + count + "題";
     }
 
     public void OnCorrect()
@@ -76,8 +80,7 @@ public class Question_Pic : MonoBehaviour
         {
             print("答對");
             QuesPic[rndNum].SetActive(false);
-            print(rndNum);
-            OnQues();
+            Rnd();
         }
         else
             print("錯誤");
@@ -88,7 +91,6 @@ public class Question_Pic : MonoBehaviour
         winImage.SetActive(true);
         yield return new WaitForSeconds(3f);
         winImage.SetActive(false);
-        //OnClickQues();
     }
 
     public void A()
