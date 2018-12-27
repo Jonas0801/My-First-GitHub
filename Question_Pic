@@ -6,22 +6,25 @@ using UnityEngine.UI;
 public class Question_Pic : MonoBehaviour
 {
     public Text level;
+    public GameObject winImage, correctImage, errorImage;
     public int btnValue;
+
     int count;
     int rndNum;
 
-    public GameObject winImage;
     public GameObject[] QuesPic;
     [Range(1, 4)]
     public int[] ansRndValue;
     public int[] saveRndNum;
 
-
-    // Start is called before the first frame update
-
     private void Start()
     {
+        correctImage.SetActive(false);
+        errorImage.SetActive(false);
         winImage.SetActive(false);
+
+        level.text = "請按開始執行";
+
         foreach (var ques in QuesPic)
         {
             ques.SetActive(false);
@@ -59,15 +62,7 @@ public class Question_Pic : MonoBehaviour
             }
             QuesPic[rndNum].SetActive(true);
         } 
-        count++;
-        
-        if (count == ansRndValue.Length + 1)
-        {
-            count = 0;
-            saveRndNum = new int[10];
-            StartCoroutine(win());
-            print("通關");
-        }
+        count++;       
 
         level.text = "第" + count + "題";
     }
@@ -78,12 +73,40 @@ public class Question_Pic : MonoBehaviour
 
         if (ansRndValue[rndNum] == btnValue)
         {
-            print("答對");
-            QuesPic[rndNum].SetActive(false);
-            Rnd();
+            if (count == ansRndValue.Length)
+            {
+                count = 0;
+                saveRndNum = new int[10];
+                StartCoroutine(win());
+                print("通關");
+            }
+            else
+            {
+                print("答對");
+                QuesPic[rndNum].SetActive(false);
+                StartCoroutine(correct());
+            }
         }
         else
+        {
+            StartCoroutine(error());
             print("錯誤");
+        }            
+    }
+
+    IEnumerator error()
+    {
+        errorImage.SetActive(true);
+        yield return new WaitForSeconds(1.5f);
+        errorImage.SetActive(false);
+    }
+
+    IEnumerator correct()
+    {
+        correctImage.SetActive(true);
+        yield return new WaitForSeconds(1.5f);
+        correctImage.SetActive(false);
+        Rnd();
     }
 
     IEnumerator win()
@@ -91,6 +114,9 @@ public class Question_Pic : MonoBehaviour
         winImage.SetActive(true);
         yield return new WaitForSeconds(3f);
         winImage.SetActive(false);
+        QuesPic[rndNum].SetActive(false);
+        level.text = "請按開始執行";
+
     }
 
     public void A()
