@@ -19,8 +19,7 @@ public class EnumTest : MonoBehaviour {
             count = 0;
             print("過關");
         }
-
-        if (ansValue[count] == myAns.ToString())
+        else if (ansValue[count] == myAns.ToString())
         {
             print("正確答案是" + myAns);
             count++;            
