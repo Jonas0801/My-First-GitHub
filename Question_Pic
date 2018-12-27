@@ -6,9 +6,10 @@ using UnityEngine.UI;
 public class Question_Pic : MonoBehaviour
 {
     public Text level;
-    public GameObject winImage, correctImage, errorImage;
+    public GameObject victoryImage, correctImage, errorImage;
     public int btnValue;
 
+    bool isBtn;
     int count;
     int rndNum;
 
@@ -21,7 +22,9 @@ public class Question_Pic : MonoBehaviour
     {
         correctImage.SetActive(false);
         errorImage.SetActive(false);
-        winImage.SetActive(false);
+        victoryImage.SetActive(false);
+
+        saveRndNum = new int[QuesPic.Length];
 
         level.text = "請按開始執行";
 
@@ -70,7 +73,7 @@ public class Question_Pic : MonoBehaviour
     public void OnCorrect()
     {
         if (QuesPic[rndNum].activeSelf == false) { print("沒有題目!"); return; }
-
+        if (isBtn) { return; }
         if (ansRndValue[rndNum] == btnValue)
         {
             if (count == ansRndValue.Length)
@@ -82,13 +85,14 @@ public class Question_Pic : MonoBehaviour
             }
             else
             {
-                print("答對");
-                QuesPic[rndNum].SetActive(false);
+                isBtn = true;
+                print("答對");                
                 StartCoroutine(correct());
             }
         }
         else
         {
+            isBtn = true;
             StartCoroutine(error());
             print("錯誤");
         }            
@@ -99,6 +103,7 @@ public class Question_Pic : MonoBehaviour
         errorImage.SetActive(true);
         yield return new WaitForSeconds(1.5f);
         errorImage.SetActive(false);
+        isBtn = false;
     }
 
     IEnumerator correct()
@@ -106,14 +111,16 @@ public class Question_Pic : MonoBehaviour
         correctImage.SetActive(true);
         yield return new WaitForSeconds(1.5f);
         correctImage.SetActive(false);
+        QuesPic[rndNum].SetActive(false);
+        isBtn = false;
         Rnd();
     }
 
     IEnumerator win()
     {
-        winImage.SetActive(true);
+        victoryImage.SetActive(true);
         yield return new WaitForSeconds(3f);
-        winImage.SetActive(false);
+        victoryImage.SetActive(false);
         QuesPic[rndNum].SetActive(false);
         level.text = "請按開始執行";
 
